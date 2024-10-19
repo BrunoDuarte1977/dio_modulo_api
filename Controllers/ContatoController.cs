@@ -18,15 +18,15 @@ namespace ModuloAPI.Controllers
             _contexto = contexto;
         }
 
-        [HttpPost("Create")]
-        public IActionResult Create(Contato contato)
+        [HttpPost("Inserir")]
+        public IActionResult Inserir(Contato contato)
         {
             _contexto.Add(contato);
             _contexto.SaveChanges();
             return Ok(contato);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("ObterPorId")]
         public IActionResult ObterPorId(int id)
         {
             var contato = _contexto.Contatos.Find(id);
@@ -36,6 +36,44 @@ namespace ModuloAPI.Controllers
             }
 
             return Ok(contato);
+        }
+
+        [HttpGet("ObterTodos")]
+        public IActionResult ObterTodos()
+        {
+            var contatos = _contexto.Contatos.ToList();
+            return Ok(contatos);
+        }
+
+        [HttpPut("Atualizar")]
+        public IActionResult Atualizar(int id, Contato contato)
+        {
+            var contatoBanco = _contexto.Contatos.Find(id);
+
+            if(contatoBanco==null){
+                return NotFound();
+            }
+
+            contatoBanco.Nome = contato.Nome;
+            contatoBanco.Telefone = contato.Telefone;
+            contatoBanco.Ativo = contato.Ativo;
+
+            _contexto.Contatos.Update(contatoBanco);
+            _contexto.SaveChanges();
+
+            return Ok(contatoBanco);
+        }
+
+        [HttpDelete]
+        public IActionResult Deletar(int id)
+        {
+            var contatoBanco = _contexto.Contatos.Find(id);
+            if(contatoBanco==null){
+                return NotFound();
+            }
+            _contexto.Contatos.Remove(contatoBanco);
+            _contexto.SaveChanges();
+            return NoContent();
         }
     }
 }
